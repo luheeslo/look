@@ -41,7 +41,6 @@ class Collection:
 
     @falcon.before(validate_image_type)
     def on_post(self, req, resp):
-        print('teste')
         name = self._image_store.save(req.stream, req.content_type)
         resp.status = falcon.HTTP_201
         resp.location = '/images/' + name
