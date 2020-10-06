@@ -41,10 +41,10 @@ def test_list_images(client):
 
 
 def test_post_image(client, mock_store):
-    file_name = 'fake-image-name.xyz'
+    file_name = 'fake-image-name.png'
 
     mock_store.save.return_value = file_name
-    image_content_type = 'image/xyz'
+    image_content_type = 'image/png'
 
     response = client.simulate_post(
         '/images',
@@ -58,6 +58,21 @@ def test_post_image(client, mock_store):
 
     assert isinstance(saver_call[0][0], InputWrapper)
     assert saver_call[0][1] == image_content_type
+
+
+def test_post_image_invalid_content_type(client, mock_store):
+    file_name = 'fake-image-name.xyz'
+
+    mock_store.save.return_value = file_name
+    image_content_type = 'image/'
+
+    response = client.simulate_post(
+        '/images',
+        body=b'some-fake-bytes',
+        headers={'content-type': image_content_type}
+    )
+
+    assert response.status == '400 Bad Request'
 
 
 def test_saving_image(monkeypatch):
